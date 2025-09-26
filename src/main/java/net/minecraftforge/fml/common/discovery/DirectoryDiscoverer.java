@@ -69,7 +69,7 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
 
     public void exploreFileSystem(String path, File modDir, List<ModContainer> harvestedMods, ModCandidate candidate, @Nullable MetadataCollection mc)
     {
-        if (path.length() == 0)
+        if (path.isEmpty())
         {
             File metadata = new File(modDir, "mcmod.info");
             try
