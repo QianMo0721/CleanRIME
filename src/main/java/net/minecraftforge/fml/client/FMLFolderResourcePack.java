@@ -21,6 +21,8 @@ package net.minecraftforge.fml.client;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -37,6 +39,8 @@ public class FMLFolderResourcePack extends FolderResourcePack implements FMLCont
 
     private ModContainer container;
 
+    private static final String devResourcePath = System.getProperty("fml.dev.resources");
+
     public FMLFolderResourcePack(ModContainer container)
     {
         super(container.getSource());
@@ -46,19 +50,36 @@ public class FMLFolderResourcePack extends FolderResourcePack implements FMLCont
     @Override
     protected boolean hasResourceName(String p_110593_1_)
     {
-        return super.hasResourceName(p_110593_1_);
+        if (devResourcePath == null)
+        {
+            return super.hasResourceName(p_110593_1_);
+        }
+        else
+        {
+            File resource = new File(devResourcePath, p_110593_1_);
+            return resource.exists();
+        }
     }
+    
     @Override
     public String getPackName()
     {
         return "FMLFileResourcePack:"+container.getName();
     }
+    
     @Override
     protected InputStream getInputStreamByName(String resourceName) throws IOException
     {
         try
         {
-            return super.getInputStreamByName(resourceName);
+            if (devResourcePath == null)
+            {
+                return super.getInputStreamByName(resourceName);
+            }
+            else
+            {
+                return new FileInputStream(new File(devResourcePath, resourceName));
+            }
         }
         catch (IOException ioe)
         {

@@ -441,6 +441,24 @@ public class LibraryManager
     public static List<File> gatherLegacyCanidates(File mcDir)
     {
         List<File> list = new ArrayList<>();
+        
+        String extrapath =System.getProperty("fml.dev.extrapath"); 
+        if (extrapath != null) 
+        {
+            for (String mod : extrapath.split(File.pathSeparator))
+            {
+                File file = new File(mod);
+                if (file.exists())
+                {
+                    list.add(file);
+                    FMLLog.log.info("Adding extra mod file {}", file);
+                }
+                else
+                {
+                    FMLLog.log.debug("Mod file {} does not exist", file);
+                }
+            }
+        }
 
         @SuppressWarnings("unchecked")
         Map<String,String> args = (Map<String, String>)Launch.blackboard.get("forgeLaunchArgs");

@@ -50,6 +50,8 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
             return (file.isFile() && classFile.matcher(file.getName()).matches()) || file.isDirectory();
         }
     }
+    
+    private static final String devResourcePath = System.getProperty("fml.dev.resources");
 
     private ASMDataTable table;
 
@@ -72,6 +74,10 @@ public class DirectoryDiscoverer implements ITypeDiscoverer
         if (path.isEmpty())
         {
             File metadata = new File(modDir, "mcmod.info");
+            if (!metadata.exists() && devResourcePath != null)
+            {
+                metadata = new File(devResourcePath, "mcmod.info");
+            }
             try
             {
                 FileInputStream fis = new FileInputStream(metadata);
