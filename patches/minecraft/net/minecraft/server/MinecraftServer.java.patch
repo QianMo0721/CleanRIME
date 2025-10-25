@@ -1006,7 +1006,7 @@
      public int getSpawnRadius(@Nullable WorldServer worldIn)
      {
          return worldIn != null ? worldIn.getGameRules().getInt("spawnRadius") : 10;
-@@ -1634,5 +1434,229 @@
+@@ -1634,5 +1434,179 @@
          {
              this.addScheduledTask(this::reload);
          }
@@ -1045,104 +1045,54 @@
 +
 +        Bootstrap.register();
 +
++        // CleanRIME: Print Bukkit-style banner
++        com.cleanroommc.rime.BukkitBanner.printBanner();
++
 +        try
 +        {
-+            boolean flag = true;
-+            String s = null;
-+            String s1 = ".";
-+            String s2 = null;
-+            boolean flag1 = false;
-+            boolean flag2 = false;
-+            int l = -1;
++            // CleanRIME: Use JOptSimple OptionSet parsing compatible with Bukkit/CraftBukkit
++            MinecraftServerOptions serverOptions = new MinecraftServerOptions(p_main_0_);
 +
-+            for (int i1 = 0; i1 < p_main_0_.length; ++i1)
-+            {
-+                String s3 = p_main_0_[i1];
-+                String s4 = i1 == p_main_0_.length - 1 ? null : p_main_0_[i1 + 1];
-+                boolean flag3 = false;
-+
-+                if (!"nogui".equals(s3) && !"--nogui".equals(s3))
-+                {
-+                    if ("--port".equals(s3) && s4 != null)
-+                    {
-+                        flag3 = true;
-+
-+                        try
-+                        {
-+                            l = Integer.parseInt(s4);
-+                        }
-+                        catch (NumberFormatException var13)
-+                        {
-+                            ;
-+                        }
-+                    }
-+                    else if ("--singleplayer".equals(s3) && s4 != null)
-+                    {
-+                        flag3 = true;
-+                        s = s4;
-+                    }
-+                    else if ("--universe".equals(s3) && s4 != null)
-+                    {
-+                        flag3 = true;
-+                        s1 = s4;
-+                    }
-+                    else if ("--world".equals(s3) && s4 != null)
-+                    {
-+                        flag3 = true;
-+                        s2 = s4;
-+                    }
-+                    else if ("--demo".equals(s3))
-+                    {
-+                        flag1 = true;
-+                    }
-+                    else if ("--bonusChest".equals(s3))
-+                    {
-+                        flag2 = true;
-+                    }
-+                }
-+                else
-+                {
-+                    flag = false;
-+                }
-+
-+                if (flag3)
-+                {
-+                    ++i1;
-+                }
-+            }
++            boolean hasGui = serverOptions.hasGui();
++            String singleplayer = serverOptions.getSingleplayer();
++            File universe = serverOptions.getUniverse();
++            String world = serverOptions.getWorld();
++            boolean isDemo = serverOptions.isDemo();
++            boolean hasBonusChest = serverOptions.hasBonusChest();
++            int port = serverOptions.getPort();
 +
 +            YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(Proxy.NO_PROXY, UUID.randomUUID().toString());
 +            MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
 +            GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
-+            PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(s1, USER_CACHE_FILE.getName()));
-+            final DedicatedServer dedicatedserver = new DedicatedServer(new File(s1), DataFixesManager.createFixer(), yggdrasilauthenticationservice, minecraftsessionservice, gameprofilerepository, playerprofilecache);
++            PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(universe, USER_CACHE_FILE.getName()));
++            final DedicatedServer dedicatedserver = new DedicatedServer(universe, DataFixesManager.createFixer(), yggdrasilauthenticationservice, minecraftsessionservice, gameprofilerepository, playerprofilecache);
 +
-+            if (s != null)
++            if (singleplayer != null)
 +            {
-+                dedicatedserver.setServerOwner(s);
++                dedicatedserver.setServerOwner(singleplayer);
 +            }
 +
-+            if (s2 != null)
++            if (world != null)
 +            {
-+                dedicatedserver.setFolderName(s2);
++                dedicatedserver.setFolderName(world);
 +            }
 +
-+            if (l >= 0)
++            if (port >= 0)
 +            {
-+                dedicatedserver.setServerPort(l);
++                dedicatedserver.setServerPort(port);
 +            }
 +
-+            if (flag1)
++            if (isDemo)
 +            {
 +                dedicatedserver.setDemo(true);
 +            }
 +
-+            if (flag2)
++            if (hasBonusChest)
 +            {
 +                dedicatedserver.canCreateBonusChest(true);
 +            }
 +
-+            if (flag && !GraphicsEnvironment.isHeadless())
++            if (hasGui && !GraphicsEnvironment.isHeadless())
 +            {
 +                dedicatedserver.setGuiEnabled();
 +            }

@@ -65,7 +65,7 @@
                  BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
                  String s4;
  
-@@ -129,6 +124,8 @@
+@@ -129,10 +124,29 @@
              LOGGER.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
          }
  
@@ -74,7 +74,28 @@
          LOGGER.info("Loading properties");
          this.settings = new PropertyManager(new File("server.properties"));
          this.eula = new ServerEula(new File("eula.txt"));
-@@ -163,17 +160,17 @@
+ 
++        // Bridge CLI overrides (optional; safe if bridge classes are absent)
++        try {
++            Class<?> cl = Class.forName("com.cleanroommc.spigotbridge.BridgeOptions");
++            Object opts = cl.getMethod("get").invoke(null);
++            if (opts != null) {
++                try {
++                    Integer port = (Integer) cl.getMethod("portOrNull").invoke(null);
++                    if (port != null && port.intValue() > 0) this.setServerPort(port.intValue());
++                } catch (Throwable ignored) {}
++                try {
++                    String world = (String) cl.getMethod("worldOrNull").invoke(null);
++                    if (world != null && !world.isEmpty()) this.setFolderName(world);
++                } catch (Throwable ignored) {}
++                // Universe override ("universe") touches anvil root; skip here due to final field constraints
++            }
++        } catch (Throwable ignored) {}
++
+         if (!this.eula.hasAcceptedEULA())
+         {
+             LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
+@@ -163,17 +177,17 @@
  
              if (this.settings.getIntProperty("difficulty", 1) < 0)
              {
@@ -95,7 +116,7 @@
              InetAddress inetaddress = null;
  
              if (!this.getServerHostname().isEmpty())
-@@ -188,7 +185,7 @@
+@@ -188,7 +202,7 @@
  
              LOGGER.info("Generating keypair");
              this.setKeyPair(CryptManager.generateKeyPair());
@@ -104,7 +125,7 @@
  
              try
              {
-@@ -197,7 +194,7 @@
+@@ -197,7 +211,7 @@
              catch (IOException ioexception)
              {
                  LOGGER.warn("**** FAILED TO BIND TO PORT!");
@@ -113,7 +134,7 @@
                  LOGGER.warn("Perhaps a server is already running on that port?");
                  return false;
              }
-@@ -206,9 +203,7 @@
+@@ -206,9 +220,7 @@
              {
                  LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
                  LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
@@ -124,7 +145,7 @@
                  LOGGER.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
              }
  
-@@ -223,6 +218,7 @@
+@@ -223,6 +235,7 @@
              }
              else
              {
@@ -132,7 +153,7 @@
                  this.setPlayerList(new DedicatedPlayerList(this));
                  long j = System.nanoTime();
  
-@@ -234,7 +230,7 @@
+@@ -234,7 +247,7 @@
                  String s = this.settings.getStringProperty("level-seed", "");
                  String s1 = this.settings.getStringProperty("level-type", "DEFAULT");
                  String s2 = this.settings.getStringProperty("generator-settings", "");
@@ -141,7 +162,7 @@
  
                  if (!s.isEmpty())
                  {
-@@ -247,7 +243,7 @@
+@@ -247,7 +260,7 @@
                              k = l;
                          }
                      }
@@ -150,7 +171,7 @@
                      {
                          k = (long)s.hashCode();
                      }
-@@ -267,21 +263,21 @@
+@@ -267,21 +280,21 @@
                  this.setBuildLimit(this.settings.getIntProperty("max-build-height", 256));
                  this.setBuildLimit((this.getBuildLimit() + 8) / 16 * 16);
                  this.setBuildLimit(MathHelper.clamp(this.getBuildLimit(), 64, 256));
@@ -179,7 +200,7 @@
                      this.settings.removeProperty("announce-player-achievements");
                      this.settings.saveProperties();
                  }
-@@ -309,7 +305,8 @@
+@@ -309,7 +322,8 @@
                  }
  
                  Items.AIR.getSubItems(CreativeTabs.SEARCH, NonNullList.create());
@@ -189,7 +210,7 @@
              }
          }
      }
-@@ -339,46 +336,38 @@
+@@ -339,46 +353,38 @@
  
          if (!this.settings.getStringProperty("resource-pack", "").isEmpty() && s.isEmpty())
          {
@@ -237,7 +258,7 @@
      public CrashReport addServerInfoToCrashReport(CrashReport report)
      {
          report = super.addServerInfoToCrashReport(report);
-@@ -400,40 +389,34 @@
+@@ -400,40 +406,34 @@
          return report;
      }
  
@@ -280,7 +301,7 @@
      public boolean isSnooperEnabled()
      {
          return this.settings.getBooleanProperty("snooper-enabled", true);
-@@ -453,13 +436,11 @@
+@@ -453,13 +453,11 @@
          }
      }
  
@@ -294,7 +315,7 @@
      public boolean shouldUseNativeTransport()
      {
          return this.settings.getBooleanProperty("use-native-transport", true);
-@@ -470,13 +451,11 @@
+@@ -470,13 +468,11 @@
          return (DedicatedPlayerList)super.getPlayerList();
      }
  
@@ -308,7 +329,7 @@
      public String getStringProperty(String key, String defaultValue)
      {
          return this.settings.getStringProperty(key, defaultValue);
-@@ -487,38 +466,32 @@
+@@ -487,38 +483,32 @@
          return this.settings.getBooleanProperty(key, defaultValue);
      }
  
@@ -347,7 +368,7 @@
      public String getMotd()
      {
          return this.getMOTD();
-@@ -530,34 +503,29 @@
+@@ -530,34 +520,29 @@
          this.guiIsEnabled = true;
      }
  
@@ -383,7 +404,7 @@
          {
              return false;
          }
-@@ -583,33 +551,28 @@
+@@ -583,33 +568,28 @@
          }
      }
  
@@ -418,7 +439,7 @@
      public int getMaxWorldSize()
      {
          int i = this.settings.getIntProperty("max-world-size", super.getMaxWorldSize());
-@@ -626,17 +589,19 @@
+@@ -626,17 +606,19 @@
          return i;
      }
  
@@ -440,7 +461,7 @@
          {
              if (i > 0)
              {
-@@ -649,7 +614,7 @@
+@@ -649,7 +631,7 @@
  
          boolean flag1 = false;
  
@@ -449,7 +470,7 @@
          {
              if (j > 0)
              {
-@@ -662,7 +627,7 @@
+@@ -662,7 +644,7 @@
  
          boolean flag2 = false;
  
@@ -458,7 +479,7 @@
          {
              if (k > 0)
              {
-@@ -675,7 +640,7 @@
+@@ -675,7 +657,7 @@
  
          boolean flag3 = false;
  
@@ -467,7 +488,7 @@
          {
              if (l > 0)
              {
-@@ -688,7 +653,7 @@
+@@ -688,7 +670,7 @@
  
          boolean flag4 = false;
  
@@ -476,7 +497,7 @@
          {
              if (i1 > 0)
              {
-@@ -708,8 +673,9 @@
+@@ -708,8 +690,9 @@
          {
              Thread.sleep(5000L);
          }
@@ -487,7 +508,7 @@
          }
      }
  
-@@ -718,13 +684,11 @@
+@@ -718,13 +701,11 @@
          return this.settings.getLongProperty("max-tick-time", TimeUnit.MINUTES.toMillis(1L));
      }
  

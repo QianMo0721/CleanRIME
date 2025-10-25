@@ -1,11 +1,6 @@
 /.idea/*
 /.run/
 /.gradle/
-/projects/*
-!/projects/cleanroom/
-!/projects/minecraft/
-!/projects/mcp/
-!/projects/spigot-bridge/
 /buildSrc/.gradle/
 /buildSrc/build/
 /buildSrc/out/
@@ -16,3 +11,6 @@ src/main/java/com/cleanroommc/common/CleanroomVersion.java
 
 !/.idea/icon.svg
 /TODO.md
+/projects/cleanroom/
+/projects/mcp/
+/projects/minecraft/
