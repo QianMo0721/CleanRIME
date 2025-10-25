@@ -1,7 +1,10 @@
-# Cleanroom Minecraft
+# CleanRIME 1.12.2
+
+A Minecraft Cleanroom+Spigot hybrid server software
 
 ## Features
-### Implemented
+
+### Cleanroom Implemented
 
 - 1.12.2 on Java 21
 - *Latest* LWJGL3
@@ -13,10 +16,11 @@
 
 ### Planning
 
-- CleanroomGradle to replace ForgeGradle
-- Classfile API
-- Actually useful APIs (See [here](https://github.com/orgs/CleanroomMC/projects/4/))
-- Optimized
+- cleanroom: CleanroomGradle to replace ForgeGradle
+- cleanroom: Classfile API
+- cleanroom: Actually useful APIs (See [here](https://github.com/orgs/CleanroomMC/projects/4/))
+- cleanroom: Optimized
+- cleanrime - Experimental: Spigot compatibility bridge (Bukkit/Spigot API)
 
 ## Components:
 
@@ -38,12 +42,12 @@
 - **Remember to install [Fugue](https://www.curseforge.com/minecraft/mc-mods/fugue)!**
 - **And [Scalar](https://www.curseforge.com/minecraft/mc-mods/scalar-legacy)!**
 - If you were told to use **action builds** (aka bleeding edge), here: [Cleanroom](https://github.com/CleanroomMC/Cleanroom/actions), [Fugue](https://github.com/CleanroomMC/Fugue/actions)
-- You need to log in your GitHub account to download action artifacts. 
+- You need to log in your GitHub account to download action artifacts.
 
 ## Cleanroom on Server
 
-- Cleanroom can be installed on server.
-- Just use the installer mentioned in previous section, and run the jar with `--intallServer`. See [this page](https://minecraft.fandom.com/wiki/Tutorials/Setting_up_a_Minecraft_Forge_server) for more detail. 
+- Cleanroom can be installed on servers.
+- Just use the installer mentioned in the previous section, and run the jar with `--installServer`. See [this page](https://minecraft.fandom.com/wiki/Tutorials/Setting_up_a_Minecraft_Forge_server) for more details.
 
 ## Pack-making with Cleanroom
 
@@ -55,8 +59,8 @@
 
 ### About Cross-compat Between Forge and Cleanroom
 
-- Cleanroom mods (Fugue, Scalar) will be ignored by Forge, so then won't crash existed players
-- Cleanroom integrated mods (MixinBooter, ConfigAnyTime) will be ignored by Cleanroom, then won't crash new players
+- Cleanroom mods (Fugue, Scalar) will be ignored by Forge, so they won't crash existing players
+- Cleanroom integrated mods (MixinBooter, ConfigAnyTime) will be ignored by Cleanroom, so they won't crash new players
 - The version of built-in MixinBooter is configurable in forge_early.cfg
 
 ### List of Obsoleted/Incompatible Mods
@@ -75,16 +79,16 @@
 1. Clone this repository
 2. Import the `build.gradle` into your IDE (most preferably IntelliJ IDEA)
 3. Once the import has finished, run `gradlew setup`
-4. Run `gradlew --stop` to stop the daemon and prevent ForgeGradle gone wrong 
+4. Run `gradlew --stop` to stop the daemon and prevent ForgeGradle from misbehaving
 5. Build with `gradlew build`
 
 ## Development Tips:
 
 - Only modify `projects/cleanroom/src/` directory if you want to change vanilla
 - Run `gradlew genPatches` before commit, or the changes won't exist
-- Modifications on `src/` doesn't need generating patches
-- [Tips from Forge](https://github.com/MinecraftForge/MinecraftForge/wiki/If-you-want-to-contribute-to-Forge) are still apply, keep the patches clean!
-- The current patches is full of useless hunks after we switched to VineFlower, we encourage contributors to clean up these patches manually.
+- Modifications under `src/` do not need to generate patches
+- [Tips from Forge](https://github.com/MinecraftForge/MinecraftForge/wiki/If-you-want-to-contribute-to-Forge) still apply; keep the patches clean!
+- The current patches are full of useless hunks after we switched to VineFlower; we encourage contributors to clean up these patches manually.
 
 ## Mod Development:
 
