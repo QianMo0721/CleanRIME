@@ -1,0 +1,51 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+group = 'com.cleanroommc'
+version = rootProject.version
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        name = 'spigotmc-public'
+        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
+    }
+}
+
+dependencies {
+    // Compile against Spigot API; runtime will be provided by the integrated server.
+    compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
+    // Access Cleanroom types when needed during the bridge implementation.
+    compileOnly project(':cleanroom')
+
+    testImplementation platform('org.junit:junit-bom:6.0.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            groupId = 'com.cleanroommc'
+            artifactId = 'spigot-bridge'
+            version = rootProject.version
+        }
+    }
+}

@@ -1,7 +1,11 @@
 /.idea/*
 /.run/
 /.gradle/
-/projects/
+/projects/*
+!/projects/cleanroom/
+!/projects/minecraft/
+!/projects/mcp/
+!/projects/spigot-bridge/
 /buildSrc/.gradle/
 /buildSrc/build/
 /buildSrc/out/
