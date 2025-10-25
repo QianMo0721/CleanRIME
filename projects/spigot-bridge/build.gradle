@@ -19,7 +19,8 @@ dependencies {
     // Compile against Spigot API; runtime will be provided by the integrated server.
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
     // Access Cleanroom types when needed during the bridge implementation.
-    compileOnly project(':cleanroom')
+    // TODO: Re-enable when spigot-bridge actually uses Cleanroom types
+    // compileOnly project(':cleanroom')
 
     testImplementation platform('org.junit:junit-bom:6.0.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -28,6 +29,8 @@ dependencies {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    // Clear compiler args inherited from root project that are incompatible with Java 8
+    options.compilerArgs = []
 }
 
 java {
